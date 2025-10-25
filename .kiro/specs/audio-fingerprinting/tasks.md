@@ -77,26 +77,35 @@
     - Validate peak detection accuracy with synthetic signals
     - _Requirements: 4.1, 5.2_
 
-- [ ] 3. Create PostgreSQL database schema and operations
-  - [ ] 3.1 Set up database schema
+- [-] 3. Create PostgreSQL database schema and operations
+
+
+
+  - [x] 3.1 Set up database schema
+
+
     - Create songs and fingerprints tables with proper indexes
     - Write database migration scripts
     - Set up connection pooling configuration
     - _Requirements: 4.2, 6.1_
   
-  - [ ] 3.2 Implement database repository layer
+  - [x] 3.2 Implement database repository layer
+
+
     - Create SQLAlchemy models for songs and fingerprints
     - Write repository classes for CRUD operations
     - Implement fingerprint search queries with performance optimization
     - _Requirements: 4.2, 4.5, 6.4_
   
+
   - [ ] 3.3 Create database population utilities
     - Write scripts for batch fingerprint insertion
     - Implement duplicate detection and prevention
     - Create database seeding with sample songs
     - _Requirements: 6.2, 6.4, 6.5_
   
-  - [ ]* 3.4 Write database integration tests
+  - [ ] 3.4 Write database integration tests
+
     - Test fingerprint insertion and retrieval performance
     - Validate query optimization with large datasets
     - Test concurrent access scenarios
