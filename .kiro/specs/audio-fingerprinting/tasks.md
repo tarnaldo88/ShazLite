@@ -28,7 +28,12 @@
   
 
 
-  - [ ] 2.2 Implement spectral peak detection
+  - [x] 2.2 Implement spectral peak detection
+
+
+
+
+
     - Write adaptive threshold peak detection algorithm
     - Create constellation map generation from spectral peaks
     - Implement landmark pair extraction from peak data
@@ -36,7 +41,12 @@
 
     - _Requirements: 2.2, 4.1_
   
-  - [ ] 2.3 Create fingerprint hash generation
+  - [x] 2.3 Create fingerprint hash generation
+
+
+
+
+
     - Implement hash function for landmark pairs
 
 
@@ -44,13 +54,19 @@
     - Create batch processing interface for reference songs
     - _Requirements: 4.1, 6.2_
   
-  - [ ] 2.4 Build Python bindings
+  - [x] 2.4 Build Python bindings
+
+
+
+
+
     - Create pybind11 wrapper for C++ fingerprinting functions
     - Implement Python module interface with error handling
     - Write setup.py for C++ extension compilation
     - _Requirements: 2.2, 5.2_
   
-  - [ ]* 2.5 Write unit tests for audio engine
+  - [ ] 2.5 Write unit tests for audio engine
+
     - Create test audio samples with known fingerprints
     - Test fingerprint consistency across multiple runs
     - Validate peak detection accuracy with synthetic signals

@@ -67,7 +67,21 @@ setup(
     version="0.1.0",
     author="Audio Fingerprinting Team",
     description="C++ audio fingerprinting engine with Python bindings",
-    long_description="High-performance audio fingerprinting engine for music identification",
+    long_description="""
+    High-performance audio fingerprinting engine for music identification.
+    
+    This package provides Python bindings for a C++ audio fingerprinting engine
+    that can generate unique fingerprints from audio samples for music identification
+    applications similar to Shazam.
+    
+    Features:
+    - Fast C++ implementation with Python bindings
+    - Support for mono and stereo audio
+    - Automatic preprocessing (resampling, normalization)
+    - Batch processing for reference song databases
+    - Cross-platform compatibility (Windows, macOS, Linux)
+    """,
+    long_description_content_type="text/plain",
     ext_modules=ext_modules,
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
@@ -76,4 +90,25 @@ setup(
         "pybind11>=2.6.0",
         "numpy>=1.19.0",
     ],
+    extras_require={
+        "dev": [
+            "pytest>=6.0",
+            "pytest-cov>=2.0",
+        ],
+    },
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: C++",
+        "Topic :: Multimedia :: Sound/Audio :: Analysis",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+    ],
+    keywords="audio fingerprinting music identification signal processing",
 )
