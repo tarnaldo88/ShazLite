@@ -12,17 +12,25 @@
   - Create package.json and requirements.txt files with dependencies
   - _Requirements: 1.1, 2.2, 4.1_
 
-- [ ] 2. Implement C++ audio fingerprinting engine
-  - [ ] 2.1 Create audio preprocessing module
+- [-] 2. Implement C++ audio fingerprinting engine
+
+
+
+  - [x] 2.1 Create audio preprocessing module
+
+
     - Implement audio format conversion (stereo to mono, resampling)
     - Write STFT computation using FFTW3 library
     - Create windowing functions for spectral analysis
     - _Requirements: 2.2, 4.4_
   
+
+
   - [ ] 2.2 Implement spectral peak detection
     - Write adaptive threshold peak detection algorithm
     - Create constellation map generation from spectral peaks
     - Implement landmark pair extraction from peak data
+
     - _Requirements: 2.2, 4.1_
   
   - [ ] 2.3 Create fingerprint hash generation
