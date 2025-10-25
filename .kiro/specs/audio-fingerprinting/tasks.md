@@ -31,10 +31,12 @@
     - Create constellation map generation from spectral peaks
     - Implement landmark pair extraction from peak data
 
+
     - _Requirements: 2.2, 4.1_
   
   - [ ] 2.3 Create fingerprint hash generation
     - Implement hash function for landmark pairs
+
     - Write fingerprint data structure and serialization
     - Create batch processing interface for reference songs
     - _Requirements: 4.1, 6.2_

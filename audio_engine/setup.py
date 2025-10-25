@@ -34,14 +34,10 @@ ext_modules = [
 if platform.system() == "Windows":
     # Windows-specific library paths and flags
     for ext in ext_modules:
-        ext.library_dirs.extend([
-            "C:/vcpkg/installed/x64-windows/lib",
-            "C:/Program Files/FFTW",
-        ])
-        ext.include_dirs.extend([
-            "C:/vcpkg/installed/x64-windows/include",
-            "C:/Program Files/FFTW",
-        ])
+        # For Windows, build without FFTW initially and use a simpler FFT implementation
+        ext.libraries = []  # Remove FFTW dependency for now
+        ext.library_dirs = []  # Clear library dirs to avoid conflicts
+        ext.define_macros.append(("NO_FFTW", "1"))
 elif platform.system() == "Darwin":
     # macOS-specific configurations
     for ext in ext_modules:

@@ -4,23 +4,38 @@
 #include <cmath>
 #include <algorithm>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 namespace AudioFingerprint {
 
 FFTProcessor::FFTProcessor(int fft_size) 
-    : fft_size_(fft_size), fft_plan_(nullptr), input_buffer_(nullptr), output_buffer_(nullptr) {
+    : fft_size_(fft_size) {
     
     // Validate FFT size (should be power of 2)
     if (fft_size <= 0 || (fft_size & (fft_size - 1)) != 0) {
         throw std::invalid_argument("FFT size must be a positive power of 2");
     }
     
+#ifndef NO_FFTW
+    fft_plan_ = nullptr;
+    input_buffer_ = nullptr;
+    output_buffer_ = nullptr;
     initialize_fftw();
+#else
+    input_buffer_.resize(fft_size_);
+    output_buffer_.resize(fft_size_ / 2 + 1);
+#endif
 }
 
 FFTProcessor::~FFTProcessor() {
+#ifndef NO_FFTW
     cleanup_fftw();
+#endif
 }
 
+#ifndef NO_FFTW
 void FFTProcessor::initialize_fftw() {
     // Allocate aligned memory for FFTW
     input_buffer_ = fftwf_alloc_real(fft_size_);
@@ -56,6 +71,7 @@ void FFTProcessor::cleanup_fftw() {
         output_buffer_ = nullptr;
     }
 }
+#endif
 
 Spectrogram FFTProcessor::compute_stft(const std::vector<float>& audio_data, 
                                       int window_size, int hop_size) {
@@ -126,6 +142,7 @@ std::vector<Complex> FFTProcessor::compute_fft(const std::vector<float>& windowe
         throw std::invalid_argument("Windowed data is empty");
     }
     
+#ifndef NO_FFTW
     // Clear input buffer
     std::fill(input_buffer_, input_buffer_ + fft_size_, 0.0f);
     
@@ -148,7 +165,35 @@ std::vector<Complex> FFTProcessor::compute_fft(const std::vector<float>& windowe
     }
     
     return result;
+#else
+    // Simple DFT implementation for Windows (slower but works)
+    return compute_dft(windowed_data);
+#endif
 }
+
+#ifdef NO_FFTW
+std::vector<Complex> FFTProcessor::compute_dft(const std::vector<float>& windowed_data) {
+    int N = std::min(static_cast<int>(windowed_data.size()), fft_size_);
+    int output_size = fft_size_ / 2 + 1;
+    std::vector<Complex> result(output_size);
+    
+    // Compute DFT for positive frequencies only
+    for (int k = 0; k < output_size; ++k) {
+        float real_sum = 0.0f;
+        float imag_sum = 0.0f;
+        
+        for (int n = 0; n < N; ++n) {
+            float angle = -2.0f * M_PI * k * n / fft_size_;
+            real_sum += windowed_data[n] * std::cos(angle);
+            imag_sum += windowed_data[n] * std::sin(angle);
+        }
+        
+        result[k] = Complex(real_sum, imag_sum);
+    }
+    
+    return result;
+}
+#endif
 
 std::vector<float> FFTProcessor::compute_magnitude_spectrum(const std::vector<Complex>& fft_result) {
     std::vector<float> magnitude_spectrum;

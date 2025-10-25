@@ -1,8 +1,11 @@
 #pragma once
 
 #include "audio_types.h"
-#include <fftw3.h>
 #include <memory>
+
+#ifndef NO_FFTW
+#include <fftw3.h>
+#endif
 
 namespace AudioFingerprint {
 
@@ -69,6 +72,8 @@ public:
 
 private:
     int fft_size_;
+    
+#ifndef NO_FFTW
     fftwf_plan fft_plan_;
     float* input_buffer_;
     fftwf_complex* output_buffer_;
@@ -82,6 +87,15 @@ private:
      * Cleanup FFTW resources
      */
     void cleanup_fftw();
+#else
+    std::vector<float> input_buffer_;
+    std::vector<Complex> output_buffer_;
+    
+    /**
+     * Simple DFT implementation when FFTW is not available
+     */
+    std::vector<Complex> compute_dft(const std::vector<float>& windowed_data);
+#endif
 };
 
 } // namespace AudioFingerprint
