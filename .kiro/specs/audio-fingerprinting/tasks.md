@@ -65,7 +65,12 @@
     - Write setup.py for C++ extension compilation
     - _Requirements: 2.2, 5.2_
   
-  - [ ] 2.5 Write unit tests for audio engine
+  - [x] 2.5 Write unit tests for audio engine
+
+
+
+
+
 
     - Create test audio samples with known fingerprints
     - Test fingerprint consistency across multiple runs
