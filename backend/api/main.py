@@ -245,9 +245,14 @@ def setup_exception_handlers(app: FastAPI) -> None:
 
 def setup_routes(app: FastAPI) -> None:
     """Configure application routes."""
-    # Routes will be added in subsequent tasks
-    # This is a placeholder for the routing setup
-    pass
+    from backend.api.routes import identification
+    
+    # Include identification routes
+    app.include_router(
+        identification.router,
+        prefix="/api/v1",
+        tags=["identification"]
+    )
 
 
 # Create the application instance
