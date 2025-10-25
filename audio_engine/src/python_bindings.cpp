@@ -244,16 +244,15 @@ PYBIND11_MODULE(audio_fingerprint_engine, m) {
         .def("size", &AudioSample::size)
         .def("empty", &AudioSample::empty);
     
-    // AudioFingerprint class  
-    using AFFingerprint = AudioFingerprint::AudioFingerprint;
-    py::class_<AFFingerprint>(m, "AudioFingerprint")
+    // Fingerprint class  
+    py::class_<Fingerprint>(m, "AudioFingerprint")
         .def(py::init<>())
         .def(py::init<uint32_t, int, float, float, int>())
-        .def_readwrite("hash_value", &AFFingerprint::hash_value)
-        .def_readwrite("time_offset_ms", &AFFingerprint::time_offset_ms)
-        .def_readwrite("anchor_freq_hz", &AFFingerprint::anchor_freq_hz)
-        .def_readwrite("target_freq_hz", &AFFingerprint::target_freq_hz)
-        .def_readwrite("time_delta_ms", &AFFingerprint::time_delta_ms);
+        .def_readwrite("hash_value", &Fingerprint::hash_value)
+        .def_readwrite("time_offset_ms", &Fingerprint::time_offset_ms)
+        .def_readwrite("anchor_freq_hz", &Fingerprint::anchor_freq_hz)
+        .def_readwrite("target_freq_hz", &Fingerprint::target_freq_hz)
+        .def_readwrite("time_delta_ms", &Fingerprint::time_delta_ms);
     
     // SpectralPeak class
     py::class_<SpectralPeak>(m, "SpectralPeak")

@@ -14,6 +14,7 @@ ext_modules = [
         "audio_fingerprint_engine",
         [
             "src/audio_processor.cpp",
+            "src/audio_preprocessor.cpp",
             "src/fft_processor.cpp", 
             "src/peak_detector.cpp",
             "src/hash_generator.cpp",

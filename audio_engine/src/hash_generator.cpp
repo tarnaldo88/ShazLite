@@ -277,7 +277,7 @@ void HashGenerator::set_time_quantization(int quantization) {
     time_quantization_ = quantization;
 }
 
-std::string HashGenerator::get_fingerprint_statistics(const std::vector<AudioFingerprint>& fingerprints) {
+std::string HashGenerator::get_fingerprint_statistics(const std::vector<Fingerprint>& fingerprints) {
     if (fingerprints.empty()) {
         return "No fingerprints to analyze";
     }
