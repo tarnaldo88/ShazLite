@@ -53,28 +53,43 @@ if(NOT PYBIND11_FOUND)
     message(FATAL_ERROR "Could not find pybind11. Please install it with: pip install pybind11")
 endif()
 
-# Optional: Find FFTW3 (comment out if not available)
-find_package(PkgConfig QUIET)
-if(PkgConfig_FOUND)
-    pkg_check_modules(FFTW3 fftw3)
-    if(FFTW3_FOUND)
-        message(STATUS "Found FFTW3")
-    else()
-        message(WARNING "FFTW3 not found. Audio processing may be limited.")
-    endif()
+# Find FFTW3 using vcpkg or system installation
+set(FFTW3_FOUND FALSE)
+
+# Try to find FFTW3f (single precision) using CMake config (vcpkg style)
+find_package(FFTW3f CONFIG QUIET)
+if(FFTW3f_FOUND)
+    message(STATUS "Found FFTW3f via CMake config")
+    set(FFTW3_LIBRARIES FFTW3::fftw3f)
+    set(FFTW3_FOUND TRUE)
 else()
-    message(WARNING "PkgConfig not found. Skipping FFTW3 detection.")
+    # Try to find regular FFTW3 using CMake config
+    find_package(FFTW3 CONFIG QUIET)
+    if(FFTW3_FOUND)
+        message(STATUS "Found FFTW3 via CMake config")
+        set(FFTW3_LIBRARIES FFTW3::fftw3f)  # Use single precision
+    else()
+        # Fallback: Try pkg-config
+        find_package(PkgConfig QUIET)
+        if(PkgConfig_FOUND)
+            pkg_check_modules(FFTW3 fftw3f)
+            if(FFTW3_FOUND)
+                message(STATUS "Found FFTW3f via pkg-config")
+            endif()
+        endif()
+    endif()
+endif()
+
+if(NOT FFTW3_FOUND)
+    message(WARNING "FFTW3 not found. Audio processing may be limited.")
 endif()
 
 # Include directories
 include_directories(include)
-if(FFTW3_FOUND)
-    include_directories(${FFTW3_INCLUDE_DIRS})
-endif()
 
 # Source files
 set(SOURCES
-    src/audio_processor.cpp
+    src/audio_preprocessor.cpp
     src/fft_processor.cpp
     src/peak_detector.cpp
     src/hash_generator.cpp
@@ -86,7 +101,14 @@ pybind11_add_module(audio_fingerprint_engine ${SOURCES})
 
 # Link libraries
 if(FFTW3_FOUND)
-    target_link_libraries(audio_fingerprint_engine PRIVATE ${FFTW3_LIBRARIES})
+    if(TARGET FFTW3::fftw3)
+        # vcpkg style
+        target_link_libraries(audio_fingerprint_engine PRIVATE FFTW3::fftw3)
+    else()
+        # pkg-config style
+        target_include_directories(audio_fingerprint_engine PRIVATE ${FFTW3_INCLUDE_DIRS})
+        target_link_libraries(audio_fingerprint_engine PRIVATE ${FFTW3_LIBRARIES})
+    endif()
     target_compile_definitions(audio_fingerprint_engine PRIVATE HAVE_FFTW3)
 endif()
 target_compile_definitions(audio_fingerprint_engine PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
