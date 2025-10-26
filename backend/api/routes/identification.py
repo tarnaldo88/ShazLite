@@ -85,7 +85,12 @@ async def process_audio_file(file: UploadFile) -> AudioSample:
         # In a real implementation, we'd parse the audio file headers
         sample_rate = 44100
         channels = 2
-        duration_ms = len(audio_data) // (sample_rate * channels * 2) * 1000  # Rough estimate
+        
+        # Calculate duration more accurately
+        # Assume 16-bit PCM (2 bytes per sample)
+        bytes_per_sample = 2
+        total_samples = len(audio_data) // (channels * bytes_per_sample)
+        duration_ms = max(1, int((total_samples / sample_rate) * 1000))  # Ensure at least 1ms
         
         return AudioSample(
             data=audio_data,
