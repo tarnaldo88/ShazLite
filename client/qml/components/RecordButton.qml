@@ -97,7 +97,9 @@ Button {
         hoverEnabled: true
         cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ForbiddenCursor
         onClicked: {
+            console.log("RecordButton MouseArea clicked, enabled:", root.enabled)
             if (root.enabled) {
+                console.log("Emitting clicked signal")
                 root.clicked()
             }
         }

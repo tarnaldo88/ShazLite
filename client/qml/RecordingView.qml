@@ -29,8 +29,10 @@ Page {
         // Instructions
         Label {
             text: {
-                if (!audioRecorder.hasPermission) {
-                    return "Microphone permission required"
+                if (typeof audioRecorder === "undefined") {
+                    return "Loading audio recorder..."
+                } else if (!audioRecorder.hasPermission) {
+                    return "Microphone permission required - Click to grant"
                 } else if (audioRecorder.isRecording) {
                     return "Recording audio..."
                 } else {
@@ -51,14 +53,24 @@ Page {
             Layout.alignment: Qt.AlignHCenter
             isRecording: audioRecorder.isRecording
             progress: audioRecorder.recordingProgress
-            enabled: audioRecorder.hasPermission || !audioRecorder.isRecording
+            enabled: true  // Always enable the button so users can request permission
             
             onClicked: {
+                console.log("Record button clicked!")
+                console.log("audioRecorder exists:", typeof audioRecorder !== "undefined")
+                if (typeof audioRecorder !== "undefined") {
+                    console.log("audioRecorder.hasPermission:", audioRecorder.hasPermission)
+                    console.log("audioRecorder.isRecording:", audioRecorder.isRecording)
+                }
+                
                 if (!audioRecorder.hasPermission) {
+                    console.log("Requesting permission...")
                     audioRecorder.requestPermission()
                 } else if (audioRecorder.isRecording) {
+                    console.log("Stopping recording...")
                     audioRecorder.stopRecording()
                 } else {
+                    console.log("Starting recording...")
                     audioRecorder.startRecording()
                 }
             }
