@@ -8,7 +8,6 @@
 #include <QIODevice>
 #include <QTimer>
 #include <QByteArray>
-#include <QPermissions>
 #include <QAudioFormat>
 
 class AudioRecorder : public QObject
