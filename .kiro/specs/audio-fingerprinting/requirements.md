@@ -10,7 +10,7 @@ This document outlines the requirements for an audio fingerprinting application 
 - **Audio_Sample**: A 10-second digital audio recording captured by the client application
 - **Audio_Fingerprint**: A unique digital signature extracted from an audio sample using spectral analysis
 - **Fingerprint_Database**: PostgreSQL database storing audio fingerprints with associated song metadata
-- **Client_Application**: Mobile or desktop frontend application for audio recording and result display
+- **Client_Application**: Cross-platform Qt desktop application for audio recording and result display
 - **Backend_API**: FastAPI server handling audio processing requests and database queries
 - **Audio_Engine**: C++ component responsible for computing audio fingerprints from raw audio data
 - **Match_Result**: Song identification result containing song name, artist, and confidence score

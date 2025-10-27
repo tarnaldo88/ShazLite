@@ -8,6 +8,7 @@ help:
 	@echo "  install      - Install Python dependencies"
 	@echo "  install-dev  - Install development dependencies"
 	@echo "  build-engine - Build C++ audio engine"
+	@echo "  build-client - Build Qt client application"
 	@echo "  clean        - Clean build artifacts"
 	@echo "  test         - Run tests"
 	@echo "  lint         - Run linting checks"
@@ -25,11 +26,13 @@ install:
 install-dev:
 	pip install -r requirements.txt
 	pip install -e .[dev]
-	cd client && npm install
 
 # Build targets
 build-engine:
 	cd audio_engine && python setup.py build_ext --inplace
+
+build-client:
+	cd client && mkdir -p build && cd build && cmake .. && make
 
 clean:
 	find . -type f -name "*.pyc" -delete
@@ -38,7 +41,7 @@ clean:
 	rm -rf build/
 	rm -rf dist/
 	rm -rf audio_engine/build/
-	cd client && rm -rf build/ dist/ node_modules/.cache/
+	cd client && rm -rf build/
 
 # Testing and quality targets
 test:
@@ -61,7 +64,7 @@ run-backend:
 	cd backend && uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
 
 run-client:
-	cd client && npm run electron-dev
+	cd client/build && ./audio_fingerprinting_client
 
 # Docker targets
 docker-build:

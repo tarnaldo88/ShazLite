@@ -118,40 +118,40 @@
 
 - [ ] 5. Develop client application frontend
 
-  - [ ] 5.1 Set up cross-platform client structure
+  - [ ] 5.1 Set up cross-platform Qt application structure
 
-    - Create Electron application for desktop support
-    - Set up React components for audio recording interface
-    - Configure build system for multiple platforms
+    - Create Qt6 application with CMake build system
+    - Set up QML/QtQuick components for modern UI design
+    - Configure build system for multiple platforms (Windows, macOS, Linux)
     - _Requirements: 1.1, 1.2_
 
   - [ ] 5.2 Implement audio recording functionality
 
-    - Create microphone access and permission handling
-    - Write 10-second audio recording with visual feedback
-    - Implement audio format encoding (WAV/MP3)
+    - Create QAudioInput integration for microphone access
+    - Write 10-second audio recording with QML visual feedback
+    - Implement audio format encoding using Qt Multimedia (WAV/MP3)
+    - Handle audio device permissions and error states
     - _Requirements: 1.1, 1.2, 1.3, 1.5_
 
   - [ ] 5.3 Build API communication layer
 
-    - Create HTTP client for backend communication
-    - Implement audio file upload with progress tracking
-    - Write retry logic for network failures
+    - Create QNetworkAccessManager for HTTP client communication
+    - Implement audio file upload with QProgressBar tracking
+    - Write retry logic for network failures using QTimer
     - _Requirements: 2.1, 5.3_
 
   - [ ] 5.4 Create results display interface
 
-    - Design UI components for song identification results
-
-    - Implement loading states during processing
+    - Design QML UI components for song identification results
+    - Implement loading states during processing with animations
     - Create error message display for failed identifications
     - _Requirements: 3.1, 3.4, 3.5, 5.3_
 
-  - [ ] 5.5 Write client application tests
+  - [ ] 5.5 Write Qt application tests
 
-    - Test audio recording functionality
+    - Test audio recording functionality with QTest framework
     - Validate API communication and error handling
-    - Test UI components and user interactions
+    - Test QML UI components and user interactions
     - _Requirements: 1.4, 5.3_
 
 - [ ] 6. Integration and system testing
