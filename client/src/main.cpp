@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
     QQuickStyle::setStyle("Material");
     
     // Set application properties
-    app.setApplicationName("Audio Fingerprinting Client");
+    app.setApplicationName("ShazLite by Torres");
     app.setApplicationVersion("1.0.0");
-    app.setOrganizationName("Audio Fingerprinting");
-    app.setOrganizationDomain("audiofingerprinting.com");
+    app.setOrganizationName("Torres ShazLite");
+    app.setOrganizationDomain("ShazLiteTorres.com");
     
     // Register QML types - this must be done before loading QML
     qmlRegisterType<AudioRecorder>("AudioFingerprinting", 1, 0, "AudioRecorder");
@@ -71,22 +71,82 @@ int main(int argc, char *argv[])
                 width: 400
                 height: 600
                 visible: true
-                title: "Audio Fingerprinting Client"
+                title: "ShazLite by Torres"
+                
+                // Dark gradient background
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "#2c2c2c" }
+                        GradientStop { position: 1.0; color: "#1a1a1a" }
+                    }
+                }
                 
                 Column {
-                    anchors.centerIn: parent
-                    spacing: 20
+                    anchors.fill: parent
+                    anchors.margins: 20
+                    spacing: 30
                     
-                    Text {
-                        text: "ShazLite"
-                        font.pixelSize: 24
+                    // Logo at the top center
+                    Image {
+                        id: logo
+                        source: "qrc:/AudioFingerprinting/public/ShazLiteTorres.png"
+                        width: 180
+                        height: 180
+                        fillMode: Image.PreserveAspectFit
                         anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.topMargin: 40
                     }
                     
-                    Button {
-                        text: "Record Audio"
+                    // Spacer to push content down
+                    Item {
+                        width: 1
+                        height: 60
+                    }
+                    
+                    // Main content area
+                    Column {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        onClicked: console.log("Record button clicked")
+                        spacing: 20
+                        
+                        Text {
+                            text: "ShazLite"
+                            font.pixelSize: 28
+                            font.bold: true
+                            color: "#ffffff"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+                        
+                        Text {
+                            text: "Audio Fingerprinting Client"
+                            font.pixelSize: 16
+                            color: "#cccccc"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+                        
+                        Button {
+                            text: "Record Audio"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: 200
+                            height: 50
+                            
+                            background: Rectangle {
+                                color: parent.pressed ? "#0d7377" : "#14a085"
+                                radius: 25
+                                border.color: "#0d7377"
+                                border.width: 2
+                            }
+                            
+                            contentItem: Text {
+                                text: parent.text
+                                font.pixelSize: 16
+                                font.bold: true
+                                color: "#ffffff"
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            
+                            onClicked: console.log("Record button clicked")
+                        }
                     }
                 }
             }

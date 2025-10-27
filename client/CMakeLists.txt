@@ -46,6 +46,7 @@ qt_add_qml_module(AudioFingerprintingClient
     RESOURCES
         resources/icons/microphone.svg
         resources/icons/loading.svg
+        public/ShazLiteTorres.png
 )
 
 # Link Qt6 libraries
