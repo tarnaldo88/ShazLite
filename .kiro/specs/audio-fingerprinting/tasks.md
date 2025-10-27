@@ -133,7 +133,12 @@
     - _Requirements: 1.1, 1.2, 1.3, 1.5_
 
 
-  - [ ] 5.3 Build API communication layer
+  - [x] 5.3 Build API communication layer
+
+
+
+
+
 
     - Create QNetworkAccessManager for HTTP client communication
     - Implement audio file upload with QProgressBar tracking

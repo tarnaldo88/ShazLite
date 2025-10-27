@@ -66,6 +66,41 @@ install(TARGETS AudioFingerprintingClient
     RUNTIME DESTINATION bin
 )
 
+# Optional: Build tests if Qt6Test is available
+find_package(Qt6 QUIET COMPONENTS Test)
+if(Qt6Test_FOUND)
+    enable_testing()
+    
+    qt_add_executable(test_apiclient
+        src/test_apiclient.cpp
+        src/apiclient.cpp
+        src/apiclient.h
+    )
+    
+    target_link_libraries(test_apiclient
+        Qt6::Core
+        Qt6::Network
+        Qt6::Test
+    )
+    
+    add_test(NAME ApiClientTest COMMAND test_apiclient)
+endif()
+
+# Optional: Build demo application
+option(BUILD_DEMO "Build API client demo" OFF)
+if(BUILD_DEMO)
+    qt_add_executable(apiclient_demo
+        src/apiclient_demo.cpp
+        src/apiclient.cpp
+        src/apiclient.h
+    )
+    
+    target_link_libraries(apiclient_demo
+        Qt6::Core
+        Qt6::Network
+    )
+endif()
+
 # CPack configuration for packaging
 include(CPack)
 set(CPACK_PACKAGE_NAME "Audio Fingerprinting Client")

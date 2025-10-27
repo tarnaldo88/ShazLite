@@ -84,12 +84,13 @@ Page {
                 if (audioRecorder.isRecording) {
                     return audioRecorder.recordingProgress / 100.0
                 } else if (apiClient.isProcessing) {
-                    return -1 // Indeterminate
+                    // Show upload progress if available, otherwise indeterminate
+                    return apiClient.uploadProgress > 0 ? apiClient.uploadProgress / 100.0 : -1
                 }
                 return 0
             }
             
-            indeterminate: apiClient.isProcessing
+            indeterminate: apiClient.isProcessing && apiClient.uploadProgress === 0
         }
 
         // Status text
@@ -98,7 +99,11 @@ Page {
                 if (audioRecorder.isRecording) {
                     return `Recording: ${audioRecorder.recordingProgress}%`
                 } else if (apiClient.isProcessing) {
-                    return "Identifying song..."
+                    if (apiClient.uploadProgress > 0 && apiClient.uploadProgress < 100) {
+                        return `Uploading: ${apiClient.uploadProgress}%`
+                    } else {
+                        return "Identifying song..."
+                    }
                 } else if (audioRecorder.errorMessage) {
                     return audioRecorder.errorMessage
                 }
@@ -113,11 +118,22 @@ Page {
             visible: text.length > 0
         }
 
-        // Loading indicator
-        LoadingIndicator {
+        // Loading indicator and cancel button
+        ColumnLayout {
             Layout.alignment: Qt.AlignHCenter
+            spacing: 15
             visible: apiClient.isProcessing
-            running: apiClient.isProcessing
+
+            LoadingIndicator {
+                Layout.alignment: Qt.AlignHCenter
+                running: apiClient.isProcessing
+            }
+
+            Button {
+                text: "Cancel"
+                Layout.alignment: Qt.AlignHCenter
+                onClicked: apiClient.cancelCurrentRequest()
+            }
         }
 
         // Audio format selection
@@ -172,6 +188,45 @@ Page {
         
         function onPermissionDenied() {
             root.showError("Microphone permission is required to record audio. Please enable it in your system settings.")
+        }
+    }
+
+    // Connect to API client retry signals
+    Connections {
+        target: apiClient
+        
+        function onRetryAttempt(attempt, maxRetries) {
+            retryStatusLabel.text = `Retrying... (${attempt}/${maxRetries})`
+            retryStatusLabel.visible = true
+        }
+        
+        function onIdentificationResult(result) {
+            retryStatusLabel.visible = false
+        }
+        
+        function onIdentificationFailed(error) {
+            retryStatusLabel.visible = false
+        }
+    }
+
+    // Retry status label
+    Label {
+        id: retryStatusLabel
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 20
+        text: ""
+        font.pixelSize: 12
+        color: "#f39c12"
+        visible: false
+        
+        background: Rectangle {
+            color: "#fff3cd"
+            border.color: "#ffeaa7"
+            border.width: 1
+            radius: 4
+            anchors.fill: parent
+            anchors.margins: -8
         }
     }
 
