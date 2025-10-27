@@ -182,7 +182,7 @@ Page {
         }
         
         function onRecordingFailed(error) {
-            root.showError(error)
+            root.displayError(error)
         }
         
         function onPermissionGranted() {
@@ -190,7 +190,7 @@ Page {
         }
         
         function onPermissionDenied() {
-            root.showError("Microphone permission is required to record audio. Please enable it in your system settings.")
+            root.displayError("Microphone permission is required to record audio. Please enable it in your system settings.")
         }
     }
 
@@ -248,7 +248,7 @@ Page {
         }
     }
 
-    function showError(error) {
+    function displayError(error) {
         errorDialog.errorMessage = error
         errorDialog.open()
     }

@@ -69,7 +69,7 @@ void AudioRecorder::startRecording()
     }
 
     // Create audio input
-    m_audioInput = new QAudioInput(audioDevice, m_currentFormat, this);
+    m_audioInput = new QAudioSource(audioDevice, m_currentFormat, this);
     
     // Start recording
     m_audioDevice = m_audioInput->start();

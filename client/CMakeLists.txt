@@ -5,6 +5,11 @@ project(AudioFingerprintingClient VERSION 1.0.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# MSVC specific settings for C++17
+if(MSVC)
+    add_compile_options(/Zc:__cplusplus /permissive-)
+endif()
+
 # Find Qt6 components
 find_package(Qt6 REQUIRED COMPONENTS Core Quick Multimedia Network)
 
@@ -35,13 +40,16 @@ qt_add_qml_module(AudioFingerprintingClient
         qml/ResultsView.qml
         qml/components/RecordButton.qml
         qml/components/LoadingIndicator.qml
+        qml/components/ConfidenceIndicator.qml
+        qml/components/ErrorDisplay.qml
+        qml/components/ProcessingAnimation.qml
     RESOURCES
         resources/icons/microphone.svg
         resources/icons/loading.svg
 )
 
 # Link Qt6 libraries
-target_link_libraries(AudioFingerprintingClient
+target_link_libraries(AudioFingerprintingClient PRIVATE
     Qt6::Core
     Qt6::Quick
     Qt6::Multimedia
@@ -77,7 +85,7 @@ if(Qt6Test_FOUND)
         src/apiclient.h
     )
     
-    target_link_libraries(test_apiclient
+    target_link_libraries(test_apiclient PRIVATE
         Qt6::Core
         Qt6::Network
         Qt6::Test
@@ -95,7 +103,7 @@ if(BUILD_DEMO)
         src/apiclient.h
     )
     
-    target_link_libraries(apiclient_demo
+    target_link_libraries(apiclient_demo PRIVATE
         Qt6::Core
         Qt6::Network
     )

@@ -2,7 +2,7 @@
 #define AUDIORECORDER_H
 
 #include <QObject>
-#include <QAudioInput>
+#include <QAudioSource>
 #include <QAudioDevice>
 #include <QMediaDevices>
 #include <QIODevice>
@@ -62,7 +62,7 @@ private:
     QByteArray encodeToWav(const QByteArray &rawData, const QAudioFormat &format);
     QByteArray encodeToMp3(const QByteArray &rawData, const QAudioFormat &format);
 
-    QAudioInput *m_audioInput;
+    QAudioSource *m_audioInput;
     QIODevice *m_audioDevice;
     QTimer *m_progressTimer;
     QByteArray m_audioBuffer;

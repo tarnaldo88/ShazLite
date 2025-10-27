@@ -38,7 +38,6 @@ Button {
             color: "transparent"
             border.color: "#ffffff"
             border.width: 4
-            opacity: root.isRecording ? 0.8 : 0
             
             // Progress arc (simplified as opacity change)
             opacity: root.isRecording ? (0.3 + 0.7 * root.progress / 100.0) : 0
