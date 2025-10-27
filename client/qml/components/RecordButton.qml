@@ -13,8 +13,14 @@ Button {
     background: Rectangle {
         anchors.fill: parent
         radius: width / 2
-        color: root.isRecording ? "#e74c3c" : "#3498db"
-        border.color: root.isRecording ? "#c0392b" : "#2980b9"
+        color: {
+            if (!root.enabled) return "#bdc3c7"
+            return root.isRecording ? "#e74c3c" : "#3498db"
+        }
+        border.color: {
+            if (!root.enabled) return "#95a5a6"
+            return root.isRecording ? "#c0392b" : "#2980b9"
+        }
         border.width: 3
         
         // Pulse animation when recording
@@ -52,7 +58,7 @@ Button {
             width: 40
             height: 50
             radius: 20
-            color: "white"
+            color: root.enabled ? "white" : "#7f8c8d"
             visible: !root.isRecording
             
             Rectangle {
@@ -61,7 +67,7 @@ Button {
                 width: 60
                 height: 20
                 radius: 10
-                color: "white"
+                color: root.enabled ? "white" : "#7f8c8d"
                 anchors.bottomMargin: -10
             }
             
@@ -70,7 +76,7 @@ Button {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 4
                 height: 15
-                color: "white"
+                color: root.enabled ? "white" : "#7f8c8d"
                 anchors.topMargin: 5
             }
         }
@@ -81,7 +87,7 @@ Button {
             width: 30
             height: 30
             radius: 4
-            color: "white"
+            color: root.enabled ? "white" : "#7f8c8d"
             visible: root.isRecording
         }
     }
@@ -90,17 +96,21 @@ Button {
     MouseArea {
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
+        cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ForbiddenCursor
+        onClicked: {
+            if (root.enabled) {
+                root.clicked()
+            }
+        }
         
         onEntered: {
-            if (!root.isRecording) {
+            if (root.enabled && !root.isRecording) {
                 parent.background.scale = 1.05
             }
         }
         
         onExited: {
-            if (!root.isRecording) {
+            if (root.enabled && !root.isRecording) {
                 parent.background.scale = 1.0
             }
         }

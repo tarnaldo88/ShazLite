@@ -110,7 +110,6 @@
 
   - [x] 4.5 Write API integration tests
 
-
     - Test audio upload and identification flow
     - Validate error handling for malformed requests
     - Test concurrent request processing
@@ -120,23 +119,19 @@
 
   - [x] 5.1 Set up cross-platform Qt application structure
 
-
-
-
-
-
     - Create Qt6 application with CMake build system
     - Set up QML/QtQuick components for modern UI design
     - Configure build system for multiple platforms (Windows, macOS, Linux)
     - _Requirements: 1.1, 1.2_
 
-  - [ ] 5.2 Implement audio recording functionality
+  - [x] 5.2 Implement audio recording functionality
 
     - Create QAudioInput integration for microphone access
     - Write 10-second audio recording with QML visual feedback
     - Implement audio format encoding using Qt Multimedia (WAV/MP3)
     - Handle audio device permissions and error states
     - _Requirements: 1.1, 1.2, 1.3, 1.5_
+
 
   - [ ] 5.3 Build API communication layer
 

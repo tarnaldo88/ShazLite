@@ -26,11 +26,17 @@ Page {
 
         // Instructions
         Label {
-            text: audioRecorder.isRecording ? 
-                  "Recording audio..." : 
-                  "Tap the microphone to identify a song"
+            text: {
+                if (!audioRecorder.hasPermission) {
+                    return "Microphone permission required"
+                } else if (audioRecorder.isRecording) {
+                    return "Recording audio..."
+                } else {
+                    return "Tap the microphone to identify a song"
+                }
+            }
             font.pixelSize: 16
-            color: "#7f8c8d"
+            color: !audioRecorder.hasPermission ? "#e74c3c" : "#7f8c8d"
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
@@ -43,13 +49,27 @@ Page {
             Layout.alignment: Qt.AlignHCenter
             isRecording: audioRecorder.isRecording
             progress: audioRecorder.recordingProgress
+            enabled: audioRecorder.hasPermission || !audioRecorder.isRecording
             
             onClicked: {
-                if (audioRecorder.isRecording) {
+                if (!audioRecorder.hasPermission) {
+                    audioRecorder.requestPermission()
+                } else if (audioRecorder.isRecording) {
                     audioRecorder.stopRecording()
                 } else {
                     audioRecorder.startRecording()
                 }
+            }
+        }
+
+        // Permission request button (when permission is denied)
+        Button {
+            text: "Grant Microphone Permission"
+            Layout.alignment: Qt.AlignHCenter
+            visible: !audioRecorder.hasPermission && !audioRecorder.isRecording
+            
+            onClicked: {
+                audioRecorder.requestPermission()
             }
         }
 
@@ -99,6 +119,39 @@ Page {
             visible: apiClient.isProcessing
             running: apiClient.isProcessing
         }
+
+        // Audio format selection
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            visible: !audioRecorder.isRecording && !apiClient.isProcessing
+            spacing: 20
+
+            Label {
+                text: "Format:"
+                font.pixelSize: 14
+                color: "#7f8c8d"
+            }
+
+            ButtonGroup {
+                id: formatGroup
+            }
+
+            RadioButton {
+                text: "WAV"
+                checked: audioRecorder.audioFormat === "wav"
+                ButtonGroup.group: formatGroup
+                onClicked: audioRecorder.audioFormat = "wav"
+            }
+
+            RadioButton {
+                text: "MP3"
+                checked: audioRecorder.audioFormat === "mp3"
+                ButtonGroup.group: formatGroup
+                onClicked: audioRecorder.audioFormat = "mp3"
+                enabled: false // Disabled for now since MP3 encoding is not fully implemented
+                opacity: 0.5
+            }
+        }
     }
 
     // Connect to audio recorder signals
@@ -111,6 +164,14 @@ Page {
         
         function onRecordingFailed(error) {
             root.showError(error)
+        }
+        
+        function onPermissionGranted() {
+            // Permission granted, user can now record
+        }
+        
+        function onPermissionDenied() {
+            root.showError("Microphone permission is required to record audio. Please enable it in your system settings.")
         }
     }
 
