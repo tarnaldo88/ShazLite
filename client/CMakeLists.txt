@@ -77,10 +77,11 @@ install(TARGETS AudioFingerprintingClient
 )
 
 # Optional: Build tests if Qt6Test is available
-find_package(Qt6 QUIET COMPONENTS Test)
+find_package(Qt6 QUIET COMPONENTS Test Qml Quick)
 if(Qt6Test_FOUND)
     enable_testing()
     
+    # Original API client test
     qt_add_executable(test_apiclient
         src/test_apiclient.cpp
         src/apiclient.cpp
@@ -94,6 +95,69 @@ if(Qt6Test_FOUND)
     )
     
     add_test(NAME ApiClientTest COMMAND test_apiclient)
+    
+    # Extended API client test
+    qt_add_executable(test_apiclient_extended
+        src/test_apiclient_extended.cpp
+        src/apiclient.cpp
+        src/apiclient.h
+    )
+    
+    target_link_libraries(test_apiclient_extended PRIVATE
+        Qt6::Core
+        Qt6::Network
+        Qt6::Test
+    )
+    
+    add_test(NAME ApiClientExtendedTest COMMAND test_apiclient_extended)
+    
+    # Audio recorder test
+    qt_add_executable(test_audiorecorder
+        src/test_audiorecorder.cpp
+        src/audiorecorder.cpp
+        src/audiorecorder.h
+    )
+    
+    target_link_libraries(test_audiorecorder PRIVATE
+        Qt6::Core
+        Qt6::Multimedia
+        Qt6::Test
+    )
+    
+    add_test(NAME AudioRecorderTest COMMAND test_audiorecorder)
+    
+    # QML components test (if Qt6Qml and Qt6Quick are available)
+    if(Qt6Qml_FOUND AND Qt6Quick_FOUND)
+        qt_add_executable(test_qml_components
+            src/test_qml_components.cpp
+            src/audiorecorder.cpp
+            src/audiorecorder.h
+            src/apiclient.cpp
+            src/apiclient.h
+        )
+        
+        target_link_libraries(test_qml_components PRIVATE
+            Qt6::Core
+            Qt6::Qml
+            Qt6::Quick
+            Qt6::Network
+            Qt6::Multimedia
+            Qt6::Test
+        )
+        
+        add_test(NAME QmlComponentsTest COMMAND test_qml_components)
+    endif()
+    
+    # Test runner script
+    add_custom_target(run_all_tests
+        COMMAND ${CMAKE_CTEST_COMMAND} --verbose
+        DEPENDS test_apiclient test_apiclient_extended test_audiorecorder
+        COMMENT "Running all Qt application tests"
+    )
+    
+    if(Qt6Qml_FOUND AND Qt6Quick_FOUND)
+        add_dependencies(run_all_tests test_qml_components)
+    endif()
 endif()
 
 # Optional: Build demo application
