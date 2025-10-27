@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
                     spacing: 20
                     
                     Text {
-                        text: "Audio Fingerprinting Client"
+                        text: "ShazLite"
                         font.pixelSize: 24
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
