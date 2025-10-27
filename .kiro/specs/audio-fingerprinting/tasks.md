@@ -118,7 +118,9 @@
 
 - [ ] 5. Develop client application frontend
 
-  - [-] 5.1 Set up cross-platform Qt application structure
+  - [x] 5.1 Set up cross-platform Qt application structure
+
+
 
 
 
