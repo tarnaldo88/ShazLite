@@ -118,7 +118,10 @@
 
 - [ ] 5. Develop client application frontend
 
-  - [ ] 5.1 Set up cross-platform Qt application structure
+  - [-] 5.1 Set up cross-platform Qt application structure
+
+
+
 
     - Create Qt6 application with CMake build system
     - Set up QML/QtQuick components for modern UI design
