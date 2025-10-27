@@ -6,6 +6,8 @@ import "components"
 Page {
     id: root
     
+    property var lastRecordedAudio: null
+    
     signal recordingCompleted(var audioData)
     signal showResults(var result)
     signal showError(string error)
@@ -175,6 +177,7 @@ Page {
         target: audioRecorder
         
         function onRecordingCompleted(audioData) {
+            root.lastRecordedAudio = audioData
             root.recordingCompleted(audioData)
         }
         
