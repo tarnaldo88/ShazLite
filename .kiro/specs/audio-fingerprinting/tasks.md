@@ -146,7 +146,6 @@
     - Create error message display for failed identifications
     - _Requirements: 3.1, 3.4, 3.5, 5.3_
 
-
   - [ ] 5.5 Write Qt application tests
 
     - Test audio recording functionality with QTest framework

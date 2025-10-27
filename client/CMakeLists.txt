@@ -11,7 +11,7 @@ if(MSVC)
 endif()
 
 # Find Qt6 components
-find_package(Qt6 REQUIRED COMPONENTS Core Quick Multimedia Network)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2 Multimedia Network)
 
 # Enable automatic MOC, UIC, and RCC processing
 set(CMAKE_AUTOMOC ON)
@@ -52,6 +52,7 @@ qt_add_qml_module(AudioFingerprintingClient
 target_link_libraries(AudioFingerprintingClient PRIVATE
     Qt6::Core
     Qt6::Quick
+    Qt6::QuickControls2
     Qt6::Multimedia
     Qt6::Network
 )
