@@ -1,0 +1,83 @@
+# Development Docker Compose configuration
+version: '3.8'
+
+services:
+  # Development Database (same as production but with different settings)
+  database:
+    image: postgres:15-alpine
+    container_name: audio_fingerprinting_db_dev
+    environment:
+      POSTGRES_DB: audio_fingerprinting_dev
+      POSTGRES_USER: audio_user
+      POSTGRES_PASSWORD: dev_password
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts
+    networks:
+      - audio_network_dev
+    restart: unless-stopped
+    command: >
+      postgres
+      -c log_statement=all
+      -c log_min_duration_statement=0
+      -c max_connections=100
+
+  # Development Redis
+  redis:
+    image: redis:7-alpine
+    container_name: audio_fingerprinting_redis_dev
+    ports:
+      - "6380:6379"  # Different port
+    networks:
+      - audio_network_dev
+    restart: unless-stopped
+
+  # Development API with hot reload
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: audio_fingerprinting_api_dev
+    environment:
+      # Database configuration
+      DATABASE_URL: postgresql://audio_user:dev_password@database:5432/audio_fingerprinting_dev
+      
+      # Development settings
+      DEBUG: "true"
+      ENVIRONMENT: "development"
+      LOG_LEVEL: "DEBUG"
+      RELOAD: "true"
+      
+      # Relaxed security for development
+      ALLOWED_HOSTS: "*"
+      CORS_ORIGINS: "*"
+      ADMIN_API_KEY: "dev_admin_key"
+      
+      # Development performance settings
+      REQUEST_TIMEOUT_SECONDS: 60
+      AUDIO_PROCESSING_TIMEOUT_SECONDS: 30
+    ports:
+      - "8001:8000"  # Different port
+    networks:
+      - audio_network_dev
+    depends_on:
+      - database
+      - redis
+    restart: unless-stopped
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/audio_engine/build  # Exclude build directory
+      - ./logs:/app/logs
+    command: ["python", "-m", "uvicorn", "backend.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "debug"]
+
+volumes:
+  postgres_dev_data:
+    driver: local
+
+networks:
+  audio_network_dev:
+    driver: bridge

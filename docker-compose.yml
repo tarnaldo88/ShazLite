@@ -1,0 +1,156 @@
+# Docker Compose configuration for Audio Fingerprinting System
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: audio_fingerprinting_db
+    environment:
+      POSTGRES_DB: audio_fingerprinting
+      POSTGRES_USER: audio_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-audio_password_change_me}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - audio_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U audio_user -d audio_fingerprinting"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=64MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+
+  # Redis Cache (optional, for future caching layer)
+  redis:
+    image: redis:7-alpine
+    container_name: audio_fingerprinting_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - audio_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+  # Audio Fingerprinting API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: audio_fingerprinting_api
+    environment:
+      # Database configuration
+      DATABASE_URL: postgresql://audio_user:${DB_PASSWORD:-audio_password_change_me}@database:5432/audio_fingerprinting
+      DATABASE_POOL_SIZE: 10
+      DATABASE_MAX_OVERFLOW: 20
+      DATABASE_POOL_TIMEOUT: 30
+      
+      # API configuration
+      API_TITLE: "Audio Fingerprinting API"
+      API_VERSION: "1.0.0"
+      HOST: "0.0.0.0"
+      PORT: 8000
+      DEBUG: "false"
+      ENVIRONMENT: "production"
+      
+      # Security configuration
+      ALLOWED_HOSTS: "*"
+      CORS_ORIGINS: "*"
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-change_me_in_production}
+      
+      # Performance configuration
+      MAX_REQUEST_SIZE: 10485760  # 10MB
+      REQUEST_TIMEOUT_SECONDS: 30
+      AUDIO_PROCESSING_TIMEOUT_SECONDS: 10
+      DATABASE_QUERY_TIMEOUT_SECONDS: 5
+      
+      # Audio processing configuration
+      MAX_AUDIO_DURATION_MS: 30000  # 30 seconds
+      AUDIO_SAMPLE_RATE: 44100
+      FINGERPRINT_CONFIDENCE_THRESHOLD: 0.3
+      MAX_FINGERPRINT_MATCHES: 1000
+      
+      # Logging configuration
+      LOG_LEVEL: "INFO"
+      LOG_FORMAT: "json"
+      
+      # Redis configuration (if using caching)
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    networks:
+      - audio_network
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/admin/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: audio_fingerprinting_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - audio_network
+    depends_on:
+      - api
+    restart: unless-stopped
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  audio_network:
+    driver: bridge
