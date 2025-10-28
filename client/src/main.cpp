@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "audiorecorder.h"
 #include "apiclient.h"
@@ -27,15 +29,23 @@ int main(int argc, char *argv[])
     QObject::connect(&audioRecorder, &AudioRecorder::recordingCompleted,
                      &apiClient, &ApiClient::identifyAudio);
     
-    // Connect apiClient signals for debugging
+    // Connect apiClient signals for debugging and UI updates
     QObject::connect(&apiClient, &ApiClient::identificationResult,
-                     [](const QJsonObject &result) {
+                     [&engine](const QJsonObject &result) {
                          qDebug() << "Identification result:" << result;
+                         
+                         // Update UI with result
+                         QMetaObject::invokeMethod(engine.rootObjects().first(), "updateResult",
+                             Q_ARG(QVariant, QString("SUCCESS: %1").arg(QJsonDocument(result).toJson(QJsonDocument::Compact))));
                      });
     
     QObject::connect(&apiClient, &ApiClient::identificationFailed,
-                     [](const QString &error) {
+                     [&engine](const QString &error) {
                          qDebug() << "Identification failed:" << error;
+                         
+                         // Update UI with error
+                         QMetaObject::invokeMethod(engine.rootObjects().first(), "updateError",
+                             Q_ARG(QVariant, QString("ERROR: %1").arg(error)));
                      });
     
     // Use a working QML directly
@@ -45,9 +55,19 @@ import QtQuick.Controls 2.15
 
 ApplicationWindow {
     width: 400
-    height: 600
+    height: 800
     visible: true
     title: "ShazLite by Torres"
+    
+    function updateResult(result) {
+        statusText.lastResult = result
+        statusText.lastError = ""
+    }
+    
+    function updateError(error) {
+        statusText.lastError = error
+        statusText.lastResult = ""
+    }
     
     Rectangle {
         anchors.fill: parent
@@ -100,6 +120,9 @@ ApplicationWindow {
                         return "Ready to record"
                     }
                 }
+                
+                property string lastResult: ""
+                property string lastError: ""
                 font.pixelSize: 16
                 color: "#cccccc"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -167,6 +190,51 @@ ApplicationWindow {
                     return 0
                 }
                 indeterminate: apiClient.isProcessing && apiClient.uploadProgress === 0
+            }
+            
+            // Results display area
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.9
+                height: resultsColumn.implicitHeight + 20
+                color: "#333333"
+                radius: 10
+                border.color: "#555555"
+                border.width: 1
+                visible: statusText.lastResult !== "" || statusText.lastError !== ""
+                
+                Column {
+                    id: resultsColumn
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+                    
+                    Text {
+                        text: "Last Result:"
+                        font.pixelSize: 14
+                        font.bold: true
+                        color: "#ffffff"
+                        visible: statusText.lastResult !== "" || statusText.lastError !== ""
+                    }
+                    
+                    Text {
+                        text: statusText.lastResult
+                        font.pixelSize: 12
+                        color: "#00ff00"
+                        wrapMode: Text.WordWrap
+                        width: parent.width
+                        visible: statusText.lastResult !== ""
+                    }
+                    
+                    Text {
+                        text: statusText.lastError
+                        font.pixelSize: 12
+                        color: "#ff6666"
+                        wrapMode: Text.WordWrap
+                        width: parent.width
+                        visible: statusText.lastError !== ""
+                    }
+                }
             }
         }
     }

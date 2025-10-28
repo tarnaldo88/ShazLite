@@ -48,6 +48,7 @@ private:
     void setIsProcessing(bool processing);
     void setUploadProgress(int progress);
     QByteArray createWavHeader(const QByteArray &audioData, int sampleRate = 44100, int channels = 1);
+    QByteArray convertMonoToStereo(const QByteArray &monoData);
     void performIdentifyRequest(const QByteArray &audioData);
     void cleanupCurrentRequest();
     bool shouldRetry(QNetworkReply::NetworkError error) const;

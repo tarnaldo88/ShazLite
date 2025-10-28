@@ -249,8 +249,9 @@ void ApiClient::setUploadProgress(int progress)
 
 void ApiClient::performIdentifyRequest(const QByteArray &audioData)
 {
-    // Create WAV file with proper header
-    QByteArray wavData = createWavHeader(audioData);
+    // Convert mono audio to stereo for server compatibility
+    QByteArray stereoAudioData = convertMonoToStereo(audioData);
+    QByteArray wavData = createWavHeader(stereoAudioData, 44100, 2);
 
     // Create multipart form data
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
@@ -258,7 +259,7 @@ void ApiClient::performIdentifyRequest(const QByteArray &audioData)
     QHttpPart audioPart;
     audioPart.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("audio/wav"));
     audioPart.setHeader(QNetworkRequest::ContentDispositionHeader, 
-                       QVariant("form-data; name=\"audio\"; filename=\"recording.wav\""));
+                       QVariant("form-data; name=\"audio_file\"; filename=\"recording.wav\""));
     audioPart.setBody(wavData);
     multiPart->append(audioPart);
 
@@ -337,4 +338,22 @@ QByteArray ApiClient::createWavHeader(const QByteArray &audioData, int sampleRat
     stream << quint32(audioData.size());
     
     return header + audioData;
+}
+
+QByteArray ApiClient::convertMonoToStereo(const QByteArray &monoData)
+{
+    // Convert mono 16-bit PCM to stereo by duplicating each sample
+    QByteArray stereoData;
+    stereoData.reserve(monoData.size() * 2);
+    
+    // Process 16-bit samples (2 bytes each)
+    for (int i = 0; i < monoData.size(); i += 2) {
+        if (i + 1 < monoData.size()) {
+            // Copy the mono sample to both left and right channels
+            stereoData.append(monoData.mid(i, 2)); // Left channel
+            stereoData.append(monoData.mid(i, 2)); // Right channel (same as left)
+        }
+    }
+    
+    return stereoData;
 }
