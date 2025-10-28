@@ -21,6 +21,15 @@ def create_test_audio():
 def test_matching():
     """Test if we can match the same audio."""
     try:
+        # Initialize database
+        from backend.database.connection import initialize_database, DatabaseConfig
+        from backend.api.config import get_settings
+        
+        settings = get_settings()
+        db_config = DatabaseConfig(settings)
+        initialize_database(db_config)
+        print("✅ Database initialized")
+        
         print("Creating test audio...")
         audio_data, sample_rate = create_test_audio()
         
