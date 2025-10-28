@@ -77,7 +77,10 @@ class DatabaseConnectionManager:
                 max_overflow=self.config.max_connections - self.config.min_connections,
                 pool_timeout=self.config.pool_timeout,
                 pool_recycle=3600,  # Recycle connections every hour
-                echo=False  # Set to True for SQL debugging
+                echo=False,  # Set to True for SQL debugging
+                connect_args={
+                    "options": "-c statement_timeout=30000"  # 30 second query timeout
+                }
             )
             
             # Create session factory

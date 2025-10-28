@@ -225,25 +225,39 @@ class FingerprintRepository(BaseRepository):
             return []
         
         try:
+            # Limit the number of fingerprints to query for performance
+            max_query_fingerprints = 2000
+            limited_fingerprints = query_fingerprints[:max_query_fingerprints]
+            
             # Extract hash values for the query
-            hash_values = [fp.hash_value for fp in query_fingerprints]
+            hash_values = [fp.hash_value for fp in limited_fingerprints]
             
             # Create a mapping of hash to query time offset
-            hash_to_query_time = {fp.hash_value: fp.time_offset_ms for fp in query_fingerprints}
+            hash_to_query_time = {fp.hash_value: fp.time_offset_ms for fp in limited_fingerprints}
             
-            # Query database for matching hashes
-            matches = self.session.query(
-                FingerprintModel.song_id,
-                FingerprintModel.hash_value,
-                FingerprintModel.time_offset_ms
-            ).filter(FingerprintModel.hash_value.in_(hash_values)).all()
+            # Process in smaller batches to avoid database timeout
+            batch_size = 500
+            all_matches = []
+            
+            for i in range(0, len(hash_values), batch_size):
+                batch_hashes = hash_values[i:i + batch_size]
+                
+                # Query database for matching hashes in this batch
+                batch_matches = self.session.query(
+                    FingerprintModel.song_id,
+                    FingerprintModel.hash_value,
+                    FingerprintModel.time_offset_ms
+                ).filter(FingerprintModel.hash_value.in_(batch_hashes)).limit(5000).all()
+                
+                all_matches.extend(batch_matches)
             
             # Convert to result format
             results = []
-            for song_id, hash_value, db_time_offset in matches:
+            for song_id, hash_value, db_time_offset in all_matches:
                 query_time_offset = hash_to_query_time[hash_value]
                 results.append((song_id, query_time_offset, db_time_offset))
             
+            logger.info(f"Found {len(results)} matching fingerprints from {len(limited_fingerprints)} query fingerprints")
             return results
         
         except SQLAlchemyError as e:

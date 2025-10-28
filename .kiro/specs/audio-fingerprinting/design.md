@@ -12,26 +12,26 @@ graph TB
         CA[Client Application]
         MIC[Microphone Input]
     end
-    
+
     subgraph "API Layer"
         API[FastAPI Backend]
         AUTH[Authentication]
         VALID[Request Validation]
     end
-    
+
     subgraph "Processing Layer"
         ENGINE[C++ Audio Engine]
         FFT[FFT Processing]
         PEAK[Peak Detection]
         HASH[Hash Generation]
     end
-    
+
     subgraph "Data Layer"
         DB[(PostgreSQL Database)]
         FP_TABLE[Fingerprint Table]
         SONG_TABLE[Song Metadata Table]
     end
-    
+
     MIC --> CA
     CA -->|10s Audio Sample| API
     API --> VALID
@@ -47,6 +47,7 @@ graph TB
 ## Components and Interfaces
 
 ### Client Application
+
 - **Technology**: Electron (desktop) / React Native (mobile)
 - **Audio Recording**: Web Audio API / Native audio APIs
 - **Interface**: RESTful HTTP client
@@ -57,6 +58,7 @@ graph TB
   - Handle network errors and retry logic
 
 ### FastAPI Backend Server
+
 - **Technology**: Python FastAPI with async/await
 - **Interface**: REST endpoints with JSON payloads
 - **Key Endpoints**:
@@ -70,6 +72,7 @@ graph TB
   - Return structured JSON responses with song metadata
 
 ### C++ Audio Fingerprinting Engine
+
 - **Technology**: C++17 with Python bindings (pybind11)
 - **Dependencies**: FFTW3 for FFT, custom peak detection
 - **Algorithm**: Landmark-based fingerprinting similar to Shazam
@@ -82,7 +85,9 @@ graph TB
 - **Interface**: Python module with `generate_fingerprint()` and `batch_process()` functions
 
 ### PostgreSQL Database
+
 - **Schema Design**:
+
   ```sql
   -- Song metadata table
   CREATE TABLE songs (
@@ -93,7 +98,7 @@ graph TB
       duration_seconds INTEGER,
       created_at TIMESTAMP DEFAULT NOW()
   );
-  
+
   -- Fingerprint hash table
   CREATE TABLE fingerprints (
       id BIGSERIAL PRIMARY KEY,
@@ -102,7 +107,7 @@ graph TB
       time_offset_ms INTEGER NOT NULL,
       created_at TIMESTAMP DEFAULT NOW()
   );
-  
+
   -- Indexes for fast lookups
   CREATE INDEX idx_fingerprints_hash ON fingerprints(hash_value);
   CREATE INDEX idx_fingerprints_song_time ON fingerprints(song_id, time_offset_ms);
@@ -111,6 +116,7 @@ graph TB
 ## Data Models
 
 ### Audio Sample
+
 ```python
 class AudioSample:
     data: bytes          # Raw audio data
@@ -121,6 +127,7 @@ class AudioSample:
 ```
 
 ### Fingerprint
+
 ```python
 class Fingerprint:
     hash_value: int      # 32-bit hash of landmark pair
@@ -131,6 +138,7 @@ class Fingerprint:
 ```
 
 ### Match Result
+
 ```python
 class MatchResult:
     song_id: int         # Database song identifier
@@ -145,18 +153,21 @@ class MatchResult:
 ## Error Handling
 
 ### Client-Side Errors
+
 - **Microphone Access Denied**: Prompt user to enable permissions
 - **Network Timeout**: Retry with exponential backoff (3 attempts)
 - **Audio Recording Failure**: Display error message and retry option
 - **Invalid Response**: Log error details and show generic failure message
 
 ### Server-Side Errors
+
 - **Invalid Audio Format**: Return HTTP 400 with format requirements
 - **Audio Processing Failure**: Return HTTP 500 with error ID for tracking
 - **Database Connection Error**: Return HTTP 503 with retry-after header
 - **Engine Crash**: Restart engine process and return HTTP 500
 
 ### Database Errors
+
 - **Connection Pool Exhaustion**: Queue requests with timeout
 - **Query Timeout**: Return partial results if available
 - **Index Corruption**: Rebuild indexes during maintenance window
@@ -165,18 +176,21 @@ class MatchResult:
 ## Testing Strategy
 
 ### Unit Testing
+
 - **Audio Engine**: Test fingerprint generation with known audio samples
 - **API Endpoints**: Test request validation and response formatting
 - **Database Layer**: Test query performance and data integrity
 - **Client Components**: Test audio recording and UI interactions
 
 ### Integration Testing
+
 - **End-to-End Flow**: Record audio → process → match → display results
 - **Performance Testing**: Concurrent user simulation (100+ requests)
 - **Database Load Testing**: Large fingerprint database queries
 - **Error Scenario Testing**: Network failures, malformed requests
 
 ### Reference Data Testing
+
 - **Known Song Database**: Populate with 1000+ reference songs
 - **Accuracy Metrics**: Measure identification success rate
 - **False Positive Testing**: Ensure non-matching audio returns no results
@@ -185,18 +199,21 @@ class MatchResult:
 ## Performance Considerations
 
 ### Audio Processing Optimization
+
 - **SIMD Instructions**: Use vectorized operations for FFT computation
 - **Memory Management**: Pre-allocate buffers for audio processing
 - **Parallel Processing**: Multi-threaded fingerprint generation
 - **Cache Optimization**: Keep frequently accessed fingerprints in memory
 
 ### Database Optimization
+
 - **Hash Distribution**: Ensure uniform distribution of fingerprint hashes
 - **Query Optimization**: Use covering indexes for common queries
 - **Connection Pooling**: Maintain persistent database connections
 - **Partitioning**: Partition fingerprint table by hash ranges for large datasets
 
 ### Scalability Design
+
 - **Horizontal Scaling**: Stateless API servers behind load balancer
 - **Caching Layer**: Redis cache for frequent fingerprint lookups
 - **CDN Integration**: Cache static assets and API responses
