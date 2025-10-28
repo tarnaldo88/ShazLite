@@ -4,7 +4,7 @@
 import os
 import psycopg2
 import numpy as np
-from pydub import AudioSegment
+import librosa
 from audio_engine.fingerprint_api import get_engine
 
 # Directory containing your MP3 files
@@ -15,23 +15,14 @@ def load_mp3_file(file_path):
     try:
         print(f"Loading: {os.path.basename(file_path)}")
         
-        # Load MP3 file
-        audio = AudioSegment.from_mp3(file_path)
+        # Load MP3 file using librosa with fixed sample rate for consistency
+        target_sr = 44100  # Standardize on 44.1kHz
+        audio_data, sample_rate = librosa.load(file_path, sr=target_sr, mono=True)
         
-        # Convert to mono and get sample rate
-        audio = audio.set_channels(1)  # Convert to mono
-        sample_rate = audio.frame_rate
+        # Convert to float32 if needed
+        audio_data = audio_data.astype(np.float32)
         
-        # Convert to numpy array
-        audio_data = np.array(audio.get_array_of_samples(), dtype=np.float32)
-        
-        # Normalize to [-1, 1] range
-        if audio_data.dtype == np.int16:
-            audio_data = audio_data / 32768.0
-        elif audio_data.dtype == np.int32:
-            audio_data = audio_data / 2147483648.0
-        
-        print(f"  Sample rate: {sample_rate} Hz")
+        print(f"  Sample rate: {sample_rate} Hz (resampled to {target_sr})")
         print(f"  Duration: {len(audio_data) / sample_rate:.1f} seconds")
         print(f"  Samples: {len(audio_data)}")
         

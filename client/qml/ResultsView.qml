@@ -256,12 +256,13 @@ Page {
                         }
                     }
 
-                    // Song information
+                    // Song information table
                     ColumnLayout {
                         Layout.fillWidth: true
-                        spacing: 10
+                        spacing: 15
                         visible: result && result.song_id !== undefined
 
+                        // Song title (prominent display)
                         Label {
                             text: result ? (result.title || "Unknown Title") : ""
                             font.pixelSize: 24
@@ -272,27 +273,136 @@ Page {
                             Layout.fillWidth: true
                         }
 
-                        Label {
-                            text: result ? (result.artist || "Unknown Artist") : ""
-                            font.pixelSize: 18
-                            color: "#7f8c8d"
-                            horizontalAlignment: Text.AlignHCenter
-                            wrapMode: Text.WordWrap
+                        // Information table
+                        Rectangle {
                             Layout.fillWidth: true
-                        }
+                            Layout.preferredHeight: songInfoTable.implicitHeight + 20
+                            color: "#f8f9fa"
+                            border.color: "#dee2e6"
+                            border.width: 1
+                            radius: 8
 
-                        Label {
-                            text: result ? (result.album || "") : ""
-                            font.pixelSize: 14
-                            color: "#95a5a6"
-                            horizontalAlignment: Text.AlignHCenter
-                            wrapMode: Text.WordWrap
-                            Layout.fillWidth: true
-                            visible: text.length > 0
+                            GridLayout {
+                                id: songInfoTable
+                                anchors.fill: parent
+                                anchors.margins: 15
+                                columns: 2
+                                columnSpacing: 20
+                                rowSpacing: 12
+
+                                // Artist
+                                Label {
+                                    text: "Artist:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                Label {
+                                    text: result ? (result.artist || "Unknown Artist") : "Unknown Artist"
+                                    font.pixelSize: 14
+                                    color: "#6c757d"
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                // Album
+                                Label {
+                                    text: "Album:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                Label {
+                                    text: result ? (result.album || "Unknown Album") : "Unknown Album"
+                                    font.pixelSize: 14
+                                    color: "#6c757d"
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                // Confidence
+                                Label {
+                                    text: "Confidence:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 10
+
+                                    Label {
+                                        text: result ? `${Math.round((result.confidence || 0) * 100)}%` : "0%"
+                                        font.pixelSize: 14
+                                        color: {
+                                            if (!result || !result.confidence) return "#6c757d"
+                                            var conf = result.confidence * 100
+                                            if (conf >= 80) return "#28a745"
+                                            if (conf >= 60) return "#ffc107"
+                                            if (conf >= 40) return "#fd7e14"
+                                            return "#dc3545"
+                                        }
+                                        font.bold: true
+                                    }
+
+                                    Rectangle {
+                                        width: 100
+                                        height: 8
+                                        radius: 4
+                                        color: "#e9ecef"
+                                        Layout.alignment: Qt.AlignVCenter
+
+                                        Rectangle {
+                                            width: parent.width * (result ? (result.confidence || 0) : 0)
+                                            height: parent.height
+                                            radius: parent.radius
+                                            color: {
+                                                if (!result || !result.confidence) return "#6c757d"
+                                                var conf = result.confidence * 100
+                                                if (conf >= 80) return "#28a745"
+                                                if (conf >= 60) return "#ffc107"
+                                                if (conf >= 40) return "#fd7e14"
+                                                return "#dc3545"
+                                            }
+
+                                            Behavior on width {
+                                                NumberAnimation { duration: 1000; easing.type: Easing.OutQuad }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Match Count
+                                Label {
+                                    text: "Matches:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                    visible: result && result.match_count !== undefined
+                                }
+
+                                Label {
+                                    text: result ? (result.match_count || 0).toString() : "0"
+                                    font.pixelSize: 14
+                                    color: "#6c757d"
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignTop
+                                    visible: result && result.match_count !== undefined
+                                }
+                            }
                         }
                     }
 
-                    // No match message with enhanced feedback
+                    // No match message with unknown values table
                     ColumnLayout {
                         Layout.fillWidth: true
                         spacing: 15
@@ -307,9 +417,100 @@ Page {
                             Layout.fillWidth: true
                         }
 
+                        // Unknown information table
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: unknownInfoTable.implicitHeight + 20
+                            color: "#f8f9fa"
+                            border.color: "#dee2e6"
+                            border.width: 1
+                            radius: 8
+
+                            GridLayout {
+                                id: unknownInfoTable
+                                anchors.fill: parent
+                                anchors.margins: 15
+                                columns: 2
+                                columnSpacing: 20
+                                rowSpacing: 12
+
+                                // Artist
+                                Label {
+                                    text: "Artist:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                Label {
+                                    text: "Unknown"
+                                    font.pixelSize: 14
+                                    color: "#6c757d"
+                                    font.italic: true
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                // Album
+                                Label {
+                                    text: "Album:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                Label {
+                                    text: "Unknown"
+                                    font.pixelSize: 14
+                                    color: "#6c757d"
+                                    font.italic: true
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                // Title
+                                Label {
+                                    text: "Title:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                Label {
+                                    text: "Unknown"
+                                    font.pixelSize: 14
+                                    color: "#6c757d"
+                                    font.italic: true
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                // Confidence
+                                Label {
+                                    text: "Confidence:"
+                                    font.bold: true
+                                    font.pixelSize: 14
+                                    color: "#495057"
+                                    Layout.alignment: Qt.AlignTop
+                                }
+
+                                Label {
+                                    text: "0%"
+                                    font.pixelSize: 14
+                                    color: "#dc3545"
+                                    font.bold: true
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignTop
+                                }
+                            }
+                        }
+
                         Label {
                             text: "We couldn't identify this song in our database."
-                            font.pixelSize: 16
+                            font.pixelSize: 14
                             color: "#7f8c8d"
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
@@ -319,8 +520,8 @@ Page {
                         Rectangle {
                             Layout.fillWidth: true
                             Layout.preferredHeight: tipsContent.implicitHeight + 20
-                            color: "#f8f9fa"
-                            border.color: "#dee2e6"
+                            color: "#fff3cd"
+                            border.color: "#ffeaa7"
                             border.width: 1
                             radius: 8
 
@@ -331,30 +532,37 @@ Page {
                                 spacing: 8
 
                                 Label {
-                                    text: "Tips for better results:"
+                                    text: "💡 Tips for better results:"
                                     font.pixelSize: 14
                                     font.bold: true
-                                    color: "#495057"
+                                    color: "#856404"
                                 }
 
                                 Label {
                                     text: "• Record in a quieter environment"
                                     font.pixelSize: 12
-                                    color: "#6c757d"
+                                    color: "#856404"
                                     Layout.fillWidth: true
                                 }
 
                                 Label {
                                     text: "• Get closer to the audio source"
                                     font.pixelSize: 12
-                                    color: "#6c757d"
+                                    color: "#856404"
                                     Layout.fillWidth: true
                                 }
 
                                 Label {
                                     text: "• Ensure the song is playing clearly"
                                     font.pixelSize: 12
-                                    color: "#6c757d"
+                                    color: "#856404"
+                                    Layout.fillWidth: true
+                                }
+
+                                Label {
+                                    text: "• Try recording a different part of the song"
+                                    font.pixelSize: 12
+                                    color: "#856404"
                                     Layout.fillWidth: true
                                 }
                             }
