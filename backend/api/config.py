@@ -36,6 +36,16 @@ class Settings(BaseSettings):
     database_max_overflow: int = Field(default=20, env="DATABASE_MAX_OVERFLOW")
     database_pool_timeout: int = Field(default=30, env="DATABASE_POOL_TIMEOUT")
     
+    # Individual Database Connection Parameters
+    db_host: str = Field(default="localhost", env="DB_HOST")
+    db_port: int = Field(default=5432, env="DB_PORT")
+    db_name: str = Field(default="audio_fingerprinting", env="DB_NAME")
+    db_user: str = Field(default="postgres", env="DB_USER")
+    db_password: str = Field(default="postgres", env="DB_PASSWORD")
+    db_min_connections: int = Field(default=5, env="DB_MIN_CONNECTIONS")
+    db_max_connections: int = Field(default=20, env="DB_MAX_CONNECTIONS")
+    db_pool_timeout: int = Field(default=30, env="DB_POOL_TIMEOUT")
+    
     # Audio Processing Configuration
     max_audio_duration_ms: int = Field(default=30000, env="MAX_AUDIO_DURATION_MS")  # 30 seconds
     supported_audio_formats: List[str] = Field(

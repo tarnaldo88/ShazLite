@@ -19,15 +19,26 @@ logger = logging.getLogger(__name__)
 class DatabaseConfig:
     """Database configuration settings."""
     
-    def __init__(self):
-        self.host = os.getenv('DB_HOST', 'localhost')
-        self.port = int(os.getenv('DB_PORT', '5432'))
-        self.database = os.getenv('DB_NAME', 'audio_fingerprinting')
-        self.username = os.getenv('DB_USER', 'postgres')
-        self.password = os.getenv('DB_PASSWORD', 'postgres')
-        self.min_connections = int(os.getenv('DB_MIN_CONNECTIONS', '5'))
-        self.max_connections = int(os.getenv('DB_MAX_CONNECTIONS', '20'))
-        self.pool_timeout = int(os.getenv('DB_POOL_TIMEOUT', '30'))
+    def __init__(self, settings=None):
+        if settings:
+            self.host = settings.db_host
+            self.port = settings.db_port
+            self.database = settings.db_name
+            self.username = settings.db_user
+            self.password = settings.db_password
+            self.min_connections = settings.db_min_connections
+            self.max_connections = settings.db_max_connections
+            self.pool_timeout = settings.db_pool_timeout
+        else:
+            # Fallback to environment variables
+            self.host = os.getenv('DB_HOST', 'localhost')
+            self.port = int(os.getenv('DB_PORT', '5432'))
+            self.database = os.getenv('DB_NAME', 'audio_fingerprinting')
+            self.username = os.getenv('DB_USER', 'postgres')
+            self.password = os.getenv('DB_PASSWORD', 'postgres')
+            self.min_connections = int(os.getenv('DB_MIN_CONNECTIONS', '5'))
+            self.max_connections = int(os.getenv('DB_MAX_CONNECTIONS', '20'))
+            self.pool_timeout = int(os.getenv('DB_POOL_TIMEOUT', '30'))
     
     @property
     def connection_string(self) -> str:

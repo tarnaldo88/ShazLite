@@ -57,12 +57,27 @@ async def lifespan(app: FastAPI):
     app.state.start_time = time.time()
     logger.info("Starting Audio Fingerprinting API server", start_time=app.state.start_time)
     
-    # Initialize database connections, load models, etc.
-    # This will be expanded when we implement the database integration
+    # Initialize database connections
+    try:
+        from backend.database.connection import initialize_database, DatabaseConfig
+        settings = get_settings()
+        db_config = DatabaseConfig(settings)
+        initialize_database(db_config)
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error("Failed to initialize database", error=str(e))
+        raise
     
     yield
     
     # Shutdown
+    try:
+        from backend.database.connection import close_database
+        close_database()
+        logger.info("Database connections closed")
+    except Exception as e:
+        logger.error("Error closing database connections", error=str(e))
+    
     uptime = time.time() - app.state.start_time
     logger.info("Shutting down Audio Fingerprinting API server", uptime_seconds=uptime)
 

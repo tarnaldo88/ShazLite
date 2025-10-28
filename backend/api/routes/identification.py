@@ -151,9 +151,13 @@ async def generate_fingerprints(audio_sample: AudioSample, engine: AudioFingerpr
             1  # Always use mono for fingerprinting
         )
         
+        # Limit the number of fingerprints to prevent database overload
+        max_fingerprints = 10000  # Reasonable limit for identification
+        actual_count = min(fingerprint_result.count, max_fingerprints)
+        
         # Convert to Fingerprint objects
         fingerprints = []
-        for i in range(fingerprint_result.count):
+        for i in range(actual_count):
             fingerprint = Fingerprint(
                 hash_value=fingerprint_result.hash_values[i],
                 time_offset_ms=fingerprint_result.time_offsets[i],
@@ -162,6 +166,9 @@ async def generate_fingerprints(audio_sample: AudioSample, engine: AudioFingerpr
                 time_delta_ms=fingerprint_result.time_deltas[i] if i < len(fingerprint_result.time_deltas) else None
             )
             fingerprints.append(fingerprint)
+        
+        if fingerprint_result.count > max_fingerprints:
+            logger.warning(f"Limited fingerprints from {fingerprint_result.count} to {max_fingerprints} for performance")
         
         logger.info(f"Generated {len(fingerprints)} fingerprints from audio sample")
         return fingerprints
@@ -177,9 +184,15 @@ async def find_matching_song(fingerprints: list[Fingerprint]) -> Optional[MatchR
         with get_db_session() as session:
             match_repo = MatchRepository(session)
             
+            # Use only a subset of fingerprints for faster matching
+            # Take every 5th fingerprint to reduce database load
+            sample_fingerprints = fingerprints[::5] if len(fingerprints) > 1000 else fingerprints
+            
+            logger.info(f"Using {len(sample_fingerprints)} fingerprints for matching (from {len(fingerprints)} total)")
+            
             # Find best match using the repository
             match_result = match_repo.find_best_match(
-                fingerprints, 
+                sample_fingerprints, 
                 min_matches=5  # Minimum number of matching fingerprints
             )
             

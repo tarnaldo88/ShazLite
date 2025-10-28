@@ -94,7 +94,7 @@ ApplicationWindow {
                     // Spacer to push content down
                     Item {
                         width: 1
-                        height: 60
+                        height: 10
                     }
             
             Text {
