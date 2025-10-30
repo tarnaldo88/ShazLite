@@ -16,20 +16,20 @@
 
 </div>
 
-## 🚀 Overview
+##  Overview
 
 ShazLite is a complete audio fingerprinting ecosystem that can identify songs from short audio clips, just like Shazam. Built with modern technologies and best practices, it demonstrates advanced software engineering across multiple domains: signal processing, machine learning, database optimization, API design, and cross-platform GUI development.
 
-### ✨ Key Highlights
+###  Key Highlights
 
-- **🎯 99%+ Accuracy**: Advanced spectral analysis with constellation mapping
-- **⚡ Sub-second Matching**: Optimized database queries with intelligent indexing  
-- **🖥️ Cross-Platform**: Native Qt6 desktop application (Windows, macOS, Linux)
-- **🏗️ Production-Ready**: Scalable FastAPI backend with comprehensive error handling
-- **🔊 Real-Time Processing**: C++ audio engine with FFTW3 for maximum performance
-- **📊 Smart Analytics**: Confidence scoring and match quality assessment
+- ** 99%+ Accuracy**: Advanced spectral analysis with constellation mapping
+- ** Sub-second Matching**: Optimized database queries with intelligent indexing  
+- ** Cross-Platform**: Native Qt6 desktop application (Windows, macOS, Linux)
+- ** Production-Ready**: Scalable FastAPI backend with comprehensive error handling
+- ** Real-Time Processing**: C++ audio engine with FFTW3 for maximum performance
+- ** Smart Analytics**: Confidence scoring and match quality assessment
 
-## 🏛️ Architecture
+##  Architecture
 
 ShazLite employs a sophisticated multi-tier architecture designed for performance and scalability:
 
@@ -66,7 +66,7 @@ graph TB
     D --> A
 ```
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 ### Frontend (Qt6/C++)
 - **Qt6 Framework**: Cross-platform native performance
@@ -92,17 +92,17 @@ graph TB
 - **ACID Compliance**: Reliable data integrity and consistency
 - **Query Optimization**: Custom algorithms for fingerprint matching
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 ShazLite/
-├── 🎵 audio_engine/              # High-performance C++ audio processing
+├──  audio_engine/              # High-performance C++ audio processing
 │   ├── src/                      # Core fingerprinting algorithms
 │   ├── include/                  # Public API headers
 │   ├── python_bindings/          # Python integration layer
 │   └── CMakeLists.txt           # Build configuration
 │
-├── 🖥️ client/                    # Cross-platform Qt6 desktop application
+├──  client/                    # Cross-platform Qt6 desktop application
 │   ├── src/                      # C++ application logic
 │   │   ├── main.cpp             # Application entry point
 │   │   ├── apiclient.cpp        # HTTP client with retry logic
@@ -114,7 +114,7 @@ ShazLite/
 │   │   └── components/          # Reusable UI components
 │   └── resources/               # Assets, icons, and styling
 │
-├── 🚀 backend/                   # FastAPI production server
+├──  backend/                   # FastAPI production server
 │   ├── api/                      # RESTful API endpoints
 │   │   ├── main.py              # Application factory and configuration
 │   │   ├── routes/              # Organized endpoint handlers
@@ -127,50 +127,50 @@ ShazLite/
 │   ├── models/                   # Business logic models
 │   └── services/                 # Domain services and algorithms
 │
-├── 🗄️ database/                  # Database management
+├──  database/                  # Database management
 │   ├── migrations/              # Version-controlled schema changes
 │   ├── seeds/                   # Sample data and test fixtures
 │   └── scripts/                 # Maintenance and optimization tools
 │
-├── 🧪 tests/                     # Comprehensive test suite
+├──  tests/                     # Comprehensive test suite
 │   ├── unit/                    # Unit tests for all components
 │   ├── integration/             # API and database integration tests
 │   ├── performance/             # Load testing and benchmarks
 │   └── e2e/                     # End-to-end user workflow tests
 │
-└── 📚 docs/                      # Documentation and specifications
+└──  docs/                      # Documentation and specifications
     ├── api/                     # OpenAPI specifications
     ├── architecture/            # System design documents
     └── deployment/              # Production deployment guides
 ```
 
-## 🎯 Core Features
+##  Core Features
 
-### 🎤 Audio Recording & Processing
+###  Audio Recording & Processing
 - **Professional Quality**: 44.1kHz/16-bit recording with noise reduction
 - **Format Support**: WAV, MP3, FLAC, and M4A compatibility
 - **Real-time Feedback**: Visual waveform display and recording progress
 - **Automatic Gain Control**: Optimal recording levels in any environment
 
-### 🔍 Advanced Fingerprinting
+###  Advanced Fingerprinting
 - **Spectral Analysis**: Custom algorithms using FFTW3 for maximum accuracy
 - **Constellation Mapping**: Proprietary peak detection and pairing
 - **Noise Resilience**: Robust identification even in noisy environments
 - **Time Alignment**: Precise temporal matching with sub-second accuracy
 
-### 💾 Intelligent Database Design
+###  Intelligent Database Design
 - **Optimized Schema**: Custom indexes for lightning-fast fingerprint lookups
 - **Scalable Architecture**: Handles millions of songs with consistent performance
 - **Smart Caching**: Intelligent query result caching for improved response times
 - **Data Integrity**: ACID compliance with comprehensive validation
 
-### 🎨 Modern User Experience
+###  Modern User Experience
 - **Intuitive Interface**: Clean, modern design with smooth animations
 - **Real-time Feedback**: Live recording visualization and progress indicators
 - **Comprehensive Results**: Detailed match information with confidence scoring
 - **Error Handling**: Graceful error recovery with helpful user guidance
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -183,7 +183,7 @@ Ensure you have the following installed:
 - **CMake 3.16+** for building C++ components
 - **C++ Compiler** with C++17 support (GCC 7+, Clang 5+, MSVC 2019+)
 
-### 🔧 Installation
+###  Installation
 
 1. **Clone the repository**
    ```bash
@@ -226,7 +226,7 @@ Ensure you have the following installed:
    cd ../..
    ```
 
-### 🎵 Usage
+###  Usage
 
 1. **Start the backend server**
    ```bash
@@ -243,7 +243,7 @@ Ensure you have the following installed:
    - Record 10-15 seconds of audio
    - Get instant results with confidence scoring!
 
-## 🧪 Testing & Quality Assurance
+##  Testing & Quality Assurance
 
 ShazLite includes a comprehensive testing suite ensuring reliability and performance:
 
@@ -267,7 +267,7 @@ python -m pytest tests/e2e/ -v
 - **Performance Tests**: Load testing and memory profiling
 - **E2E Tests**: Complete user workflows and edge cases
 
-## 📊 Performance Metrics
+##  Performance Metrics
 
 ShazLite is optimized for production use with impressive performance characteristics:
 
@@ -280,7 +280,7 @@ ShazLite is optimized for production use with impressive performance characteris
 | **Noise Tolerance** | 85%+ accuracy at 20dB SNR |
 | **Concurrent Users** | 1000+ simultaneous |
 
-## 🔧 Advanced Configuration
+##  Advanced Configuration
 
 ### Database Optimization
 ```sql
@@ -310,7 +310,7 @@ REQUEST_TIMEOUT = 30
 RATE_LIMIT = "100/minute"
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
@@ -327,7 +327,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - **QML**: Consistent naming, proper component structure
 - **SQL**: Formatted queries, proper indexing strategies
 
-## 📈 Roadmap
+##  Roadmap
 
 ### Version 2.0 (Planned)
 - [ ] **Mobile Apps**: iOS and Android clients
@@ -342,23 +342,23 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - [ ] **Advanced Analytics**: Usage statistics and insights
 - [ ] **Plugin System**: Extensible architecture
 
-## 🏆 Achievements
+##  Achievements
 
 ShazLite demonstrates mastery across multiple technical domains:
 
-- **🎵 Digital Signal Processing**: Advanced spectral analysis and feature extraction
-- **🗄️ Database Engineering**: Optimized schemas and query performance
-- **🖥️ Cross-Platform Development**: Native desktop applications with Qt6
-- **🚀 API Design**: RESTful services with comprehensive documentation
-- **🧪 Software Testing**: Comprehensive test coverage and quality assurance
-- **📊 Performance Optimization**: Sub-second response times at scale
-- **🎨 User Experience**: Intuitive interfaces with smooth animations
+- ** Digital Signal Processing**: Advanced spectral analysis and feature extraction
+- ** Database Engineering**: Optimized schemas and query performance
+- ** Cross-Platform Development**: Native desktop applications with Qt6
+- ** API Design**: RESTful services with comprehensive documentation
+- ** Software Testing**: Comprehensive test coverage and quality assurance
+- ** Performance Optimization**: Sub-second response times at scale
+- ** User Experience**: Intuitive interfaces with smooth animations
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **FFTW3 Team**: For the exceptional Fast Fourier Transform library
 - **Qt Project**: For the powerful cross-platform framework
@@ -370,7 +370,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Built with ❤️ by Torres**
+**Built by Torres**
 
 *Turning audio into insights, one fingerprint at a time*
 
