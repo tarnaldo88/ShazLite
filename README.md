@@ -1,6 +1,6 @@
 # 🎵 ShazLite - Audio Fingerprinting System
 
-<div align="center">
+
 
 ![ShazLite Logo](client/resources/public/ShazLiteTorres.png)
 
@@ -368,10 +368,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<div align="center">
+
 
 **Built by Torres**
 
 *Turning audio into insights, one fingerprint at a time*
 
-</div>
