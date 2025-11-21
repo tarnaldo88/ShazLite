@@ -4,6 +4,9 @@
 
 #include <QCoreApplication>
 #include <QDataStream>
+#include <QFile>
+#include <QStandardPaths>
+#include <QDateTime>
 
 AudioRecorder::AudioRecorder(QObject *parent)
     : QObject(parent)
@@ -122,6 +125,10 @@ void AudioRecorder::stopRecording()
         
         if (!encodedData.isEmpty()) {
             qDebug() << "Recording completed, encoded" << encodedData.size() << "bytes as" << m_audioFormat;
+            
+            // DEBUG: Save recording to file for verification
+            saveDebugRecording(encodedData);
+            
             emit recordingCompleted(encodedData);
         } else {
             setErrorMessage("Failed to encode audio data");
@@ -269,4 +276,27 @@ QByteArray AudioRecorder::encodeToMp3(const QByteArray &rawData, const QAudioFor
     // In a production environment, you would use libraries like LAME or integrate with Qt's codec system
     qWarning() << "MP3 encoding not fully implemented, falling back to WAV";
     return encodeToWav(rawData, format);
+}
+
+
+void AudioRecorder::saveDebugRecording(const QByteArray &audioData)
+{
+    // Create debug directory in user's Documents folder
+    QString debugDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/ShazLite_Debug";
+    QDir().mkpath(debugDir);
+    
+    // Create filename with timestamp
+    QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
+    QString filename = QString("%1/recording_%2.%3").arg(debugDir, timestamp, m_audioFormat);
+    
+    // Save the audio file
+    QFile file(filename);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(audioData);
+        file.close();
+        qDebug() << "✅ DEBUG: Audio saved to:" << filename;
+        qDebug() << "   File size:" << audioData.size() << "bytes";
+    } else {
+        qWarning() << "❌ DEBUG: Failed to save audio file to:" << filename;
+    }
 }

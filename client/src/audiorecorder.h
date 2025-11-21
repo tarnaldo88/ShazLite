@@ -60,6 +60,7 @@ private:
     void setupAudioFormat();
     QByteArray encodeToWav(const QByteArray &rawData, const QAudioFormat &format);
     QByteArray encodeToMp3(const QByteArray &rawData, const QAudioFormat &format);
+    void saveDebugRecording(const QByteArray &audioData);
 
     QAudioSource *m_audioInput;
     QIODevice *m_audioDevice;
