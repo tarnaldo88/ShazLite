@@ -81,15 +81,27 @@ async def process_audio_file(file: UploadFile) -> AudioSample:
             elif "mp4" in file.content_type or "m4a" in file.content_type:
                 format_name = "m4a"
         
-        # For now, we'll assume standard audio parameters
-        # In a real implementation, we'd parse the audio file headers
+        # Parse WAV header if provided to get actual format
+        # Default values if header is missing or unrecognized
         sample_rate = 44100
         channels = 2
+
+        if format_name == "wav" and len(audio_data) >= 44:
+            try:
+                # WAV header (little endian): channels at offset 22 (2 bytes), sample rate at offset 24 (4 bytes)
+                import struct
+                channels = struct.unpack('<H', audio_data[22:24])[0]
+                sample_rate = struct.unpack('<I', audio_data[24:28])[0]
+            except Exception:
+                # Fall back to defaults on parse error
+                sample_rate = 44100
+                channels = 2
         
-        # Calculate duration more accurately
-        # Assume 16-bit PCM (2 bytes per sample)
+        # Calculate duration more accurately (assume 16-bit PCM payload)
         bytes_per_sample = 2
-        total_samples = len(audio_data) // (channels * bytes_per_sample)
+        # For WAV payload, skip 44-byte header
+        payload = audio_data[44:] if format_name == "wav" and len(audio_data) >= 44 else audio_data
+        total_samples = len(payload) // (channels * bytes_per_sample)
         duration_ms = max(1, int((total_samples / sample_rate) * 1000))  # Ensure at least 1ms
         
         return AudioSample(
