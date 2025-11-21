@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QDataStream>
 #include <QFile>
+#include <QDir>
 #include <QStandardPaths>
 #include <QDateTime>
 
