@@ -251,7 +251,7 @@ void ApiClient::performIdentifyRequest(const QByteArray &audioData)
 {
     // Convert mono audio to stereo for server compatibility
     QByteArray stereoAudioData = convertMonoToStereo(audioData);
-    QByteArray wavData = createWavHeader(stereoAudioData, 44100, 2);
+    QByteArray wavData = createWavHeader(stereoAudioData, 20000, 2);
 
     // Create multipart form data
     QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
