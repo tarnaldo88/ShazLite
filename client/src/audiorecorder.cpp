@@ -230,7 +230,7 @@ void AudioRecorder::handlePermissionResult()
 
 void AudioRecorder::setupAudioFormat()
 {
-    m_currentFormat.setSampleRate(44100);
+    m_currentFormat.setSampleRate(20000);
     m_currentFormat.setChannelCount(1); // Mono
     m_currentFormat.setSampleFormat(QAudioFormat::Int16);
 }
