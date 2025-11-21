@@ -195,7 +195,7 @@ ApplicationWindow {
             // Results display area
             Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width * 0.9
+                width: parent.width * 1.9
                 height: resultsColumn.implicitHeight + 20
                 color: "#333333"
                 radius: 10
