@@ -77,7 +77,9 @@ ApplicationWindow {
         }
         
         Column {
-            anchors.centerIn: parent
+            width: parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             spacing: 30
 
             // Logo at the top center
@@ -195,7 +197,7 @@ ApplicationWindow {
             // Results display area
             Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width * 0.9
+                width: parent.width * 0.95
                 height: resultsColumn.implicitHeight + 20
                 color: "#333333"
                 radius: 10
