@@ -54,7 +54,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 ApplicationWindow {
-    width: 400
+    width: 600
     height: 800
     visible: true
     title: "ShazLite by Torres"
